@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\DocumentResource;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\CreateDocumentRequest;
 use App\Http\Resources\DocumentCollection;
 use App\Models\Document;
+use App\Exceptions\ForbiddenException;
+use App\Exceptions\NotFoundException;
 
 class DocumentController extends Controller
 {
@@ -29,7 +30,7 @@ class DocumentController extends Controller
             $document = Document::create($validated_data);
             return new DocumentResource($document);
         }else if(Auth::user()-> is_boss == 1){
-            abort(404 , 'Boss :) You donnot need to create doc!');
+            throw new NotFoundException();
         }else{
             $validated_data = $createDocumentRequest->validated();
             $validated_data['creator'] = Auth::user()->first_name . ' ' . Auth::user()->last_name;
@@ -46,20 +47,20 @@ class DocumentController extends Controller
             if($document->is_document_admin_signed){
                 return new DocumentResource($document);
             }else{
-                abort(403 , 'You donnot have access to this!');
+                throw new ForbiddenException();
             }
         }else if(Auth::user()->is_admin){
             if($document->is_document_admin_signed ==0){
                 return new DocumentResource($document);
             }else{
-                abort(403 , 'You donnot have access to this!');
+                return new ForbiddenException();
             }
         }else{
             if($document->user_id == Auth::user()->id){
 
                 return new DocumentResource($document);
             }else{
-                abort(403 , 'You donnot have access to this!');
+                return new ForbiddenException();
             }
 
         }
@@ -85,9 +86,7 @@ class DocumentController extends Controller
         if((bool)$document){
             $document->delete();
         }else{
-            return response()->json([
-                'there is not exist!'
-            ] , 403);
+            return new ForbiddenException();
         }
     }
 }

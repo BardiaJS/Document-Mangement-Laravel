@@ -7,6 +7,7 @@ use App\Events\MessageSent;
 use App\Models\Conversation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Exceptions\ForbiddenException;
 
 class ConversationController extends Controller
 {
@@ -30,7 +31,7 @@ class ConversationController extends Controller
  
            return $message;
         }else{
-            abort(403 , 'no access!');
+            throw new ForbiddenException();
         }
 
     }

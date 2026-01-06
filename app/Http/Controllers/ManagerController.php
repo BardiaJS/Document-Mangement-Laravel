@@ -8,6 +8,7 @@ use App\Http\Resources\UserResource;
 use App\Http\Resources\DocumentResource;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests; // این را اضافه کنید
+use App\Exceptions\ForbiddenException;
 
 class ManagerController extends Controller
 {

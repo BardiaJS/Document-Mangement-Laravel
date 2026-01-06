@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Exceptions\ForbiddenException;
 
 class SupportController extends Controller
 {
@@ -13,7 +14,7 @@ class SupportController extends Controller
             $user->is_banned = 1;
             $user->save();
         }else{
-            abort(403 , 'You cannot ban user! You are not support!');
+            throw new ForbiddenException();
         }
     }
     public function unban_user(User $user){
@@ -21,7 +22,7 @@ class SupportController extends Controller
             $user->is_banned = 0;
             $user->save();
         }else{
-            abort(403 , 'You cannot unban user! You are not support!');
+            throw new ForbiddenException();
         }
     }
 }
